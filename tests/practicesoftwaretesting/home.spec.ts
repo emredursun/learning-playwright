@@ -1,23 +1,47 @@
-import { test , expect } from "@playwright/test"
+import { test, expect } from "@playwright/test";
 
-test("Add basic home page verification test", async ({ page }) => {
-
+// Use test.beforeEach to ensure the page navigates to the URL before every test
+test.beforeEach(async ({ page }) => {
   await page.goto("https://practicesoftwaretesting.com/");
+});
 
-  // Ensure the sign-in link is present
-  await expect(page.getByTestId("nav-sign-in")).toHaveText("Sign in");
+test.describe("Home Page Verification", () => {
+  // --- Test 1: Check essential links and navigation ---
+  test("Check sign-in link and page title", async ({ page }) => {
+    // Ensure the sign-in link is present
+    await expect(page.getByTestId("nav-sign-in")).toHaveText("Sign in");
 
-  // Check that the page title is correct
-  await expect(page).toHaveTitle("Practice Software Testing - Toolshop - v5.0");
+    // Check that the page title is correct
+    await expect(page).toHaveTitle(
+      "Practice Software Testing - Toolshop - v5.0"
+    );
+  });
 
-  // Check the count of items displayed
-  const productGrid = page.locator(".col-md-9");
-  await expect(productGrid.getByRole("link")).toHaveCount(9);
-  expect(await productGrid.getByRole("link").count()).toBe(9);
+  // --- Test 2: Validate the initial product count on the home page ---
+  test("Validate initial product count", async ({ page }) => {
+    // The main product display area
+    const productGrid = page.locator(".col-md-9");
 
-  // Search for Thor Hammer and check the results
-  await page.getByTestId("search-query").fill("Thor Hammer");
-  await page.getByTestId("search-submit").click();
-  await expect(productGrid.getByRole("link")).toHaveCount(1);
-  await expect(page.getByAltText("Thor Hammer")).toBeVisible();
+    // Check the count of items displayed using the recommended assertion
+    await expect(productGrid.getByRole("link")).toHaveCount(9, {
+      timeout: 5000,
+    });
+    // The second way to check the count of items displayed
+    expect(await productGrid.getByRole("link").count()).toBe(9);
+  });
+
+  // --- Test 3: Validate the site search functionality ---
+  test("Validate product search functionality", async ({ page }) => {
+    const productGrid = page.locator(".col-md-9");
+
+    // Search for Thor Hammer
+    await page.getByTestId("search-query").fill("Thor Hammer");
+    await page.getByTestId("search-submit").click();
+
+    // Check that only one item is displayed after the search
+    await expect(productGrid.getByRole("link")).toHaveCount(1);
+
+    // Check that the correct product image is visible
+    await expect(page.getByAltText("Thor Hammer")).toBeVisible();
+  });
 });
