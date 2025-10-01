@@ -49,11 +49,15 @@ test.describe("Home page with no auth", () => {
 test.describe("Home page customer 02 auth", () => {
   // Use test.use to set the authenticated state for all tests in this describe block
   test.use({
+    // IMPORTANT: Ensure this file exists from your setup test!
     storageState: ".auth/customer02.json",
   });
 
   test("Check customer 02 signed in", async ({ page }) => {
+    // Check 1: The "Sign in" link should not be visible after login
     await expect(page.getByTestId("nav-sign-in")).not.toBeVisible();
+
+    // Check 2: The navigation menu should contain the authenticated user's name
     await expect(page.getByTestId("nav-menu")).toContainText("Jack Howe");
   });
 });
