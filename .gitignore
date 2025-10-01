@@ -1,9 +1,30 @@
-.DS_Store
-node_modules
-.tmp
-npm-debug.log
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-.auth/
+# ----------------------------------------------------------------------
+# 1. OS AND IDE FILES
+# ----------------------------------------------------------------------
+.DS_Store             # macOS system file
+.vscode               # VS Code workspace settings (optional, but common)
+Thumbs.db             # Windows generated file
+
+# ----------------------------------------------------------------------
+# 2. DEPENDENCIES AND BUILD ARTIFACTS
+# ----------------------------------------------------------------------
+/node_modules         # Node.js dependencies
+/dist                 # Common folder for compiled code (e.g., TypeScript output)
+/build
+npm-debug.log         # Old npm debug logs
+*.log                 # Any general log files (optional)
+
+# ----------------------------------------------------------------------
+# 3. PLAYWRIGHT SPECIFIC ARTIFACTS
+# ----------------------------------------------------------------------
+/test-results/        # Playwright test run results
+/playwright-report/   # HTML report generated after tests
+/blob-report/         # Artifacts for blob data
+/playwright/.cache/   # Playwright's browser downloads/cache
+
+# ----------------------------------------------------------------------
+# 4. SECRETS AND AUTHENTICATION
+# ----------------------------------------------------------------------
+.auth/                # Playwright authentication state files
+.env                  # Local environment variable file (MUST BE IGNORED)
+.env.*.local          # Common pattern for ignoring various local .env files

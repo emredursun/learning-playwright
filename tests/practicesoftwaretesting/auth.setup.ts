@@ -47,8 +47,8 @@ setup("Create customer 02 auth", async ({ page, context }) => {
   await loginAndSaveAuth(
     page,
     context,
-    "customer2@practicesoftwaretesting.com",
-    "welcome01",
+    process.env.CUSTOMER_EMAIL!,
+    process.env.CUSTOMER_PASSWORD!,
     ".auth/customer02.json",
     "**/account",
     "My account"
@@ -60,8 +60,8 @@ setup("Create admin auth", async ({ page, context }) => {
   await loginAndSaveAuth(
     page,
     context,
-    "admin@practicesoftwaretesting.com",
-    "welcome01",
+    process.env.ADMIN_EMAIL!,
+    process.env.ADMIN_PASSWORD!,
     ".auth/admin.json",
     "**/admin/dashboard",
     "Sales over the years"
