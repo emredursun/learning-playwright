@@ -14,7 +14,8 @@
     "test:last": "npx playwright test --project=chromium --grep @last",
     "test:local": "BASE_URL=http://localhost:4200 npx playwright test --project=chromium",
     "test:report": "npx playwright test && npx playwright show-report",
-    "test:ui": "npx playwright test --ui"
+    "test:ui": "npx playwright test --ui",
+    "test:codegen": "npx playwright codegen"
   },
   "repository": {
     "type": "git",
