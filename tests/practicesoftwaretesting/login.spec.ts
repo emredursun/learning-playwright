@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
 
+// - Navigates to the sign-in page.
+// - Fills in credentials for the default customer (Jane Doe).
+// - Verifies successful navigation to the 'My account' page and checks for the user's name "Jane Doe" in the navigation menu.
+
 test("login test", async ({ page }) => {
   await page.goto("https://practicesoftwaretesting.com/");
   await page.locator('[data-test="nav-sign-in"]').click();
