@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto("https://practicesoftwaretesting.com/");
 });
 
-test.describe("Home Page Verification", () => {
+test.describe("Home page with no auth", () => {
   // --- Test 1: Check essential links and navigation ---
   test("Check sign-in link and page title", async ({ page }) => {
     // Ensure the sign-in link is present
@@ -43,5 +43,17 @@ test.describe("Home Page Verification", () => {
 
     // Check that the correct product image is visible
     await expect(page.getByAltText("Thor Hammer")).toBeVisible();
+  });
+});
+
+test.describe("Home page customer 02 auth", () => {
+  // Use test.use to set the authenticated state for all tests in this describe block
+  test.use({
+    storageState: ".auth/customer02.json",
+  });
+
+  test("Check customer 02 signed in", async ({ page }) => {
+    await expect(page.getByTestId("nav-sign-in")).not.toBeVisible();
+    await expect(page.getByTestId("nav-menu")).toContainText("Jack Howe");
   });
 });
