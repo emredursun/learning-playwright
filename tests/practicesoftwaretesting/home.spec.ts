@@ -1,37 +1,52 @@
 import { test, expect } from "@playwright/test";
 
-// Use test.beforeEach to ensure the page navigates to the URL before every test
+// --- Constants & Reusable Logic ---
+
+const HOME_PAGE_URL = "https://practicesoftwaretesting.com/";
+
+// Reusable function to check signed-in status (since logic is repeated)
+const checkUserStatus = async (page: any, expectedName: string) => {
+  // Navigate to the page after authentication state is applied
+  await page.goto(HOME_PAGE_URL);
+
+  // Check 1: The "Sign in" link should be gone
+  await expect(page.getByTestId("nav-sign-in")).not.toBeVisible();
+
+  // Check 2: The navigation menu should contain the authenticated user's name
+  await expect(page.getByTestId("nav-menu")).toContainText(expectedName);
+};
+
+// =========================================================================
+
+// Runs before ALL tests in this file (equivalent to beforeAll for navigation)
 test.beforeEach(async ({ page }) => {
-  await page.goto("https://practicesoftwaretesting.com/");
+  await page.goto(HOME_PAGE_URL);
 });
 
-test.describe("Home page with no auth", () => {
-  // --- Test 1: Check essential links and navigation ---
-  test("Check sign-in link and page title", async ({ page }) => {
-    // Ensure the sign-in link is present
+// -------------------------------------------------------------------------
+
+test.describe("Home Page with No Authentication", () => {
+  test("Validate essential links and page title", async ({ page }) => {
+    // Check 1: Ensure the sign-in link is present (no auth)
     await expect(page.getByTestId("nav-sign-in")).toHaveText("Sign in");
 
-    // Check that the page title is correct
+    // Check 2: The page title is correct
     await expect(page).toHaveTitle(
       "Practice Software Testing - Toolshop - v5.0"
     );
   });
 
-  // --- Test 2: Validate the initial product count on the home page ---
   test("Validate initial product count", async ({ page }) => {
-    // The main product display area
     const productGrid = page.locator(".col-md-9");
 
-    // Check the count of items displayed using the recommended assertion
+    // Check the count of items displayed using the recommended Playwright assertion.
+    // The second assertion 'expect(await productGrid.getByRole("link").count()).toBe(9);' is redundant.
     await expect(productGrid.getByRole("link")).toHaveCount(9, {
       timeout: 5000,
     });
-    // The second way to check the count of items displayed
-    expect(await productGrid.getByRole("link").count()).toBe(9);
   });
 
-  // --- Test 3: Validate the site search functionality ---
-  test("Validate product search functionality", async ({ page }) => {
+  test("Validate site search functionality", async ({ page }) => {
     const productGrid = page.locator(".col-md-9");
 
     // Search for Thor Hammer
@@ -46,18 +61,26 @@ test.describe("Home page with no auth", () => {
   });
 });
 
-test.describe("Home page customer 02 auth", () => {
-  // Use test.use to set the authenticated state for all tests in this describe block
-  test.use({
-    // IMPORTANT: Ensure this file exists from your setup test!
-    storageState: ".auth/customer02.json",
+// -------------------------------------------------------------------------
+
+test.describe("Authenticated Home Page Views", () => {
+  test.describe("Customer 02 Auth", () => {
+    // Apply authentication state for all tests in this block
+    test.use({ storageState: ".auth/customer02.json" });
+
+    test("Should be signed in as Customer 02 (Jack Howe)", async ({ page }) => {
+      // Use the reusable function to perform navigation and checks
+      await checkUserStatus(page, "Jack Howe");
+    });
   });
 
-  test("Check customer 02 signed in", async ({ page }) => {
-    // Check 1: The "Sign in" link should not be visible after login
-    await expect(page.getByTestId("nav-sign-in")).not.toBeVisible();
+  test.describe("Admin Auth", () => {
+    // Apply authentication state for all tests in this block
+    test.use({ storageState: ".auth/admin.json" });
 
-    // Check 2: The navigation menu should contain the authenticated user's name
-    await expect(page.getByTestId("nav-menu")).toContainText("Jack Howe");
+    test("Should be signed in as Admin (John Doe)", async ({ page }) => {
+      // Use the reusable function to perform navigation and checks
+      await checkUserStatus(page, "John Doe");
+    });
   });
 });
