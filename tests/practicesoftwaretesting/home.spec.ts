@@ -64,23 +64,36 @@ test.describe("Home Page with No Authentication", () => {
 // -------------------------------------------------------------------------
 
 test.describe("Authenticated Home Page Views", () => {
-  test.describe("Customer 02 Auth", () => {
-    // Apply authentication state for all tests in this block
-    test.use({ storageState: ".auth/customer02.json" });
+    test.describe("Admin Auth", () => {
+      // Apply authentication state for all tests in this block
+      test.use({ storageState: ".auth/admin.json" });
 
-    test("Should be signed in as Customer 02 (Jack Howe)", async ({ page }) => {
+      test("Should be signed in as Admin (John Doe)", async ({ page }) => {
+        // Use the reusable function to perform navigation and checks
+        await checkUserStatus(page, "John Doe");
+      });
+    });
+
+  test.describe("Customer2 Auth", () => {
+    // Apply authentication state for all tests in this block
+    test.use({ storageState: ".auth/customer2.json" });
+
+    test("Should be signed in as Customer2 (Jack Howe)", async ({ page }) => {
       // Use the reusable function to perform navigation and checks
       await checkUserStatus(page, "Jack Howe");
     });
   });
 
-  test.describe("Admin Auth", () => {
-    // Apply authentication state for all tests in this block
-    test.use({ storageState: ".auth/admin.json" });
+    test.describe("Customer3 Auth", () => {
+      // Apply authentication state for all tests in this block
+      test.use({ storageState: ".auth/customer3.json" });
 
-    test("Should be signed in as Admin (John Doe)", async ({ page }) => {
-      // Use the reusable function to perform navigation and checks
-      await checkUserStatus(page, "John Doe");
+      test("Should be signed in as Customer3 (Bob Smith)", async ({
+        page,
+      }) => {
+        // Use the reusable function to perform navigation and checks
+        await checkUserStatus(page, "Bob Smith");
+      });
     });
-  });
+
 });
