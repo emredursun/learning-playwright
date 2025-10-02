@@ -9,7 +9,7 @@ type AuthFixtures = {
 };
 
 const HOME_PAGE_URL = "https://practicesoftwaretesting.com/";
-const VISUAL_VIEWPORT = { width: 1400, height: 900 };
+const VISUAL_VIEWPORT = { width: 1280, height: 720 };
 
 // Extend the base test object with our custom authenticated pages
 export const authTest = base.extend<AuthFixtures>({
