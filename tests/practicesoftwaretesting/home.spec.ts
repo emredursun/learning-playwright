@@ -1,14 +1,18 @@
 import { test, expect } from "@playwright/test";
+// IMPORT THE CUSTOM AUTH TEST OBJECT
+import { authTest } from "./base";
 
 // --- Constants & Reusable Logic ---
 
 const HOME_PAGE_URL = "https://practicesoftwaretesting.com/";
+const VISUAL_VIEWPORT = { width: 1280, height: 720 };
 
-// Reusable function to check signed-in status (since logic is repeated)
+/**
+ * Checks for signed-in status and verifies the user's name.
+ * @param page The Playwright page object (provided by a fixture).
+ * @param expectedName The name expected in the navigation menu (e.g., "John Doe").
+ */
 const checkUserStatus = async (page: any, expectedName: string) => {
-  // Navigate to the page after authentication state is applied
-  await page.goto(HOME_PAGE_URL);
-
   // Check 1: The "Sign in" link should be gone
   await expect(page.getByTestId("nav-sign-in")).not.toBeVisible();
 
@@ -18,82 +22,74 @@ const checkUserStatus = async (page: any, expectedName: string) => {
 
 // =========================================================================
 
-// Runs before ALL tests in this file (equivalent to beforeAll for navigation)
-test.beforeEach(async ({ page }) => {
-  await page.goto(HOME_PAGE_URL);
-});
-
-// -------------------------------------------------------------------------
-
+// --- UN-AUTHENTICATED TESTS (Uses standard 'test') ---
 test.describe("Home Page with No Authentication", () => {
-  test("Validate essential links and page title", async ({ page }) => {
-    // Check 1: Ensure the sign-in link is present (no auth)
-    await expect(page.getByTestId("nav-sign-in")).toHaveText("Sign in");
+  // Use a beforeEach hook to navigate before each test in this unauthenticated block
+  test.beforeEach(async ({ page }) => {
+    await page.goto(HOME_PAGE_URL);
+  });
 
-    // Check 2: The page title is correct
+  test.describe("Visual snapshot (No Auth)", () => {
+    test.use({ viewport: VISUAL_VIEWPORT });
+
+    test("Should match visual snapshot", async ({ page }) => {
+      await page.waitForLoadState("networkidle");
+      await expect(page).toHaveScreenshot("home-page-no-auth.png");
+    });
+  });
+
+  // Functional tests
+  test("Validate essential links and page title", async ({ page }) => {
+    await expect(page.getByTestId("nav-sign-in")).toHaveText("Sign in");
     await expect(page).toHaveTitle(
       "Practice Software Testing - Toolshop - v5.0"
     );
   });
 
   test("Validate initial product count", async ({ page }) => {
-    const productGrid = page.locator(".col-md-9");
-
-    // Check the count of items displayed using the recommended Playwright assertion.
-    // The second assertion 'expect(await productGrid.getByRole("link").count()).toBe(9);' is redundant.
-    await expect(productGrid.getByRole("link")).toHaveCount(9, {
-      timeout: 5000,
-    });
+    await expect(page.locator(".col-md-9").getByRole("link")).toHaveCount(9);
   });
 
   test("Validate site search functionality", async ({ page }) => {
     const productGrid = page.locator(".col-md-9");
-
-    // Search for Thor Hammer
     await page.getByTestId("search-query").fill("Thor Hammer");
     await page.getByTestId("search-submit").click();
-
-    // Check that only one item is displayed after the search
     await expect(productGrid.getByRole("link")).toHaveCount(1);
-
-    // Check that the correct product image is visible
     await expect(page.getByAltText("Thor Hammer")).toBeVisible();
   });
 });
 
 // -------------------------------------------------------------------------
 
-test.describe("Authenticated Home Page Views", () => {
-    test.describe("Admin Auth", () => {
-      // Apply authentication state for all tests in this block
-      test.use({ storageState: ".auth/admin.json" });
+// --- AUTHENTICATED TESTS (Uses custom 'authTest') ---
+authTest.describe("Authenticated Home Page Views (Fixtures)", () => {
+  // 1. Functional Status Checks (Cleanest implementation)
+  // The fixture handles the authentication and navigation
 
-      test("Should be signed in as Admin (John Doe)", async ({ page }) => {
-        // Use the reusable function to perform navigation and checks
-        await checkUserStatus(page, "John Doe");
-      });
-    });
-
-  test.describe("Customer2 Auth", () => {
-    // Apply authentication state for all tests in this block
-    test.use({ storageState: ".auth/customer2.json" });
-
-    test("Should be signed in as Customer2 (Jack Howe)", async ({ page }) => {
-      // Use the reusable function to perform navigation and checks
-      await checkUserStatus(page, "Jack Howe");
-    });
+  authTest("Should be signed in as Admin (John Doe)", async ({ adminPage }) => {
+    await checkUserStatus(adminPage, "John Doe");
   });
 
-    test.describe("Customer3 Auth", () => {
-      // Apply authentication state for all tests in this block
-      test.use({ storageState: ".auth/customer3.json" });
+  authTest(
+    "Should be signed in as Customer3 (Bob Smith)",
+    async ({ customer3Page }) => {
+      await checkUserStatus(customer3Page, "Bob Smith");
+    }
+  );
 
-      test("Should be signed in as Customer3 (Bob Smith)", async ({
-        page,
-      }) => {
-        // Use the reusable function to perform navigation and checks
-        await checkUserStatus(page, "Bob Smith");
-      });
+  // 2. Visual Snapshot Tests (Inherit viewport from the fixture)
+
+  authTest("Visual snapshot as Admin", async ({ adminPage }) => {
+    await adminPage.waitForLoadState("networkidle");
+    await expect(adminPage).toHaveScreenshot("home-page-admin.png");
+  });
+
+  authTest("Visual snapshot as Customer3", async ({ customer3Page }) => {
+    await customer3Page.waitForLoadState("networkidle");
+
+    // Note: Add a tolerance threshold to ignore minor pixel differences
+    await expect(customer3Page).toHaveScreenshot("home-page-customer3.png", {
+      maxDiffPixelRatio: 0.02, // Allows up to 2% of pixels to be different (0.02 = 2%)
     });
-
+  });
 });
