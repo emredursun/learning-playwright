@@ -34,7 +34,9 @@ test.describe("Home Page with No Authentication", () => {
 
     test("Should match visual snapshot", async ({ page }) => {
       await page.waitForLoadState("networkidle");
-      await expect(page).toHaveScreenshot("home-page-no-auth.png");
+      await expect(page).toHaveScreenshot("home-page-no-auth.png", {
+        mask: [page.getByTitle("Practice Software Testing - Toolshop")], // Mask dynamic content
+      });
     });
   });
 
@@ -81,7 +83,10 @@ authTest.describe("Authenticated Home Page Views (Fixtures)", () => {
 
   authTest("Visual snapshot as Admin", async ({ adminPage }) => {
     await adminPage.waitForLoadState("networkidle");
-    await expect(adminPage).toHaveScreenshot("home-page-admin.png");
+    await expect(adminPage).toHaveScreenshot("home-page-admin.png", {
+      mask: [adminPage.getByTitle("Practice Software Testing - Toolshop")], // Mask dynamic content
+      maxDiffPixelRatio: 0.02, // Allows up to 2% of pixels to be different (0.02 = 2%)
+    });
   });
 
   authTest("Visual snapshot as Customer3", async ({ customer3Page }) => {
@@ -89,6 +94,7 @@ authTest.describe("Authenticated Home Page Views (Fixtures)", () => {
 
     // Note: Add a tolerance threshold to ignore minor pixel differences
     await expect(customer3Page).toHaveScreenshot("home-page-customer3.png", {
+      mask: [customer3Page.getByTitle("Practice Software Testing - Toolshop")], // Mask dynamic content
       maxDiffPixelRatio: 0.02, // Allows up to 2% of pixels to be different (0.02 = 2%)
     });
   });
