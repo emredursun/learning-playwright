@@ -22,7 +22,7 @@ npm-debug.log         # Old npm debug logs
 /blob-report/         # Artifacts for blob data
 /playwright/.cache/   # Playwright's browser downloads/cache
 # Specific Snapshot Folders
-tests/practicesoftwaretesting/home.spec.ts-snapshots/
+tests/ui/practicesoftwaretesting/home.spec.ts-snapshots/
 
 # ----------------------------------------------------------------------
 # 4. SECRETS AND AUTHENTICATION
