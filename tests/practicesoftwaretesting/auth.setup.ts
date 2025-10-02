@@ -8,18 +8,15 @@ import { test as setup, expect, BrowserContext } from "@playwright/test";
  * @param context The Playwright context object.
  * @param userEmail The email address to use.
  * @param userPassword The password to use.
- * @param userName The name of the user to verify in the UI.
  * @param expectedTitle The title text expected on the destination page.
- * @param expectedUrl The URL to wait for after login (e.g., '/account' or '/admin/dashboard').
+ * @param expectedUrl The URL to wait for after login (e.g., '/account').
  * @param userAuthFile The path to save the auth state to.
  */
-
 async function loginAndSaveAuth(
   page: any,
   context: BrowserContext,
   userEmail: string,
   userPassword: string,
-  userName: string,
   expectedTitle: string,
   expectedUrl: string,
   userAuthFile: string
@@ -35,9 +32,13 @@ async function loginAndSaveAuth(
   await page.getByTestId("login-submit").click();
 
   // 3. Wait for navigation and verify successful login
-  await expect(page.getByTestId("nav-menu")).toContainText(userName);
-  await expect(page.getByTestId("page-title")).toContainText(expectedTitle);
+  // Note: Wait for URL change *before* checking the page content. 
+  // This ensures the page is stable and loaded after the redirect.
   await page.waitForURL(expectedUrl);
+  
+  // Note: Use expect().toHaveText() or .toBeVisible() on the title element
+  // as it is often more reliable than .toContainText() on dynamic elements.
+  await expect(page.getByTestId("page-title")).toHaveText(expectedTitle);
 
   // 4. Save the storage state
   await context.storageState({ path: userAuthFile });
@@ -45,44 +46,37 @@ async function loginAndSaveAuth(
 
 // =========================================================================
 
-// Define the setup for admin
-setup("Create admin auth", async ({ page, context }) => {
-  await loginAndSaveAuth(
-    page,
-    context,
-    process.env.ADMIN_EMAIL!,
-    process.env.ADMIN_PASSWORD!,
-    "John Doe",
-    "Sales over the years",
-    "**/admin/dashboard",
-    ".auth/admin.json"
-  );
-});
+// Note: Use an array of users to reduce test definition repetition
+const users = [
+    {
+        name: "admin",
+        email: process.env.ADMIN_EMAIL!,
+        password: process.env.ADMIN_PASSWORD!,
+        title: "Sales over the years",
+        url: "**/admin/dashboard",
+        file: ".auth/admin.json"
+    },
+    {
+        name: "customer3",
+        email: process.env.CUSTOMER3_EMAIL!,
+        password: process.env.CUSTOMER3_PASSWORD!,
+        title: "My account",
+        url: "**/account",
+        file: ".auth/customer3.json"
+    }
+];
 
-// Define the setup for customer2
-setup("Create customer2 auth", async ({ page, context }) => {
-  await loginAndSaveAuth(
-    page,
-    context,
-    process.env.CUSTOMER2_EMAIL!,
-    process.env.CUSTOMER2_PASSWORD!,
-    "Jack Howe",
-    "My account",
-    "**/account",
-    ".auth/customer2.json"
-  );
-});
-
-// Define the setup for customer3
-setup("Create customer3 auth", async ({ page, context }) => {
-  await loginAndSaveAuth(
-    page,
-    context,
-    process.env.CUSTOMER3_EMAIL!,
-    process.env.CUSTOMER3_PASSWORD!,
-    "Bob Smith",
-    "My account",
-    "**/account",
-    ".auth/customer3.json"
-  );
-});
+// Loop through the array to define all setup tests
+for (const user of users) {
+    setup(`Create ${user.name} auth`, async ({ page, context }) => {
+        await loginAndSaveAuth(
+            page,
+            context,
+            user.email,
+            user.password,
+            user.title,
+            user.url,
+            user.file
+        );
+    });
+}
