@@ -16,6 +16,12 @@ export default defineConfig({
   timeout: 30_000,
   globalTimeout: 10 * 60 * 1000,
   testDir: "./tests",
+  // Use testIgnore to explicitly exclude files from being considered tests.
+  // testIgnore: [
+  //   "**/ui/practicesoftwaretesting/auth.setup.ts",
+  //   // You can also exclude entire folders this way:
+  //   "**/*-snapshots/**",
+  // ],
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -53,6 +59,30 @@ export default defineConfig({
       dependencies: ["setup"],
       use: { ...devices["Desktop Chrome"], permissions: ["clipboard-read"] },
     },
+
+    // {
+    //   name: "UI Tests",
+    //   // Runs only files that do NOT match the ignore pattern
+    //   testIgnore: "**/ui/practicesoftwaretesting/auth.setup.ts",
+    //   // ... use storageState etc. ...
+    // },
+
+    // {
+    //   name: 'API Tests',
+    //   testMatch: '**/api/**/*.spec.ts', // Assumes your API tests are in an 'api' folder
+    //   use: {
+    //     // IMPORTANT: Define the baseURL for API requests
+    //     baseURL: 'https://api.practicesoftwaretesting.com', 
+        
+    //     // Optional: Set a higher timeout for potentially slower API calls
+    //     // actionTimeout: 10000, 
+        
+    //     // Optional: Set default headers for all API requests in this project
+    //     extraHTTPHeaders: {
+    //       'Accept': 'application/json',
+    //     },
+    //   },
+    // }
 
     // {
     //   name: "firefox",
