@@ -50,15 +50,15 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    {
-      name: "setup",
-      testMatch: /.*\.setup\.ts/,
-    },
-
     // {
     //   name: "setup",
-    //   testMatch: /.*\.auth\.setup\.ts/,
+    //   testMatch: /.*\.setup\.ts/,
     // },
+
+    {
+      name: "setup",
+      testMatch: /.*\.auth\.setup\.ts/,
+    },
 
     // // 2. UI TESTS PROJECT: Runs all UI tests and ensures authentication state is loaded
     // {
