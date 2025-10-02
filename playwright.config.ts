@@ -4,10 +4,9 @@ import { defineConfig, devices } from "@playwright/test";
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-import dotenv from 'dotenv';
-import path from 'path';
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-
+import dotenv from "dotenv";
+import path from "path";
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -16,13 +15,15 @@ export default defineConfig({
   timeout: 30_000,
   globalTimeout: 10 * 60 * 1000,
   testDir: "./tests",
-  // Use testIgnore to explicitly exclude files from being considered tests.
+
+  // OPTIMIZATION: Consolidated list of files/folders to ignore from standard test runs
   // testIgnore: [
-  //   "**/ui/practicesoftwaretesting/auth.setup.ts",
-  //   // You can also exclude entire folders this way:
-  //   "**/*-snapshots/**",
+  //   "**/auth.setup.ts", // Prevents setup file from running during 'npx playwright test'
+  //   "**/*-snapshots/**", // Excludes all snapshot folders
+  //   "**/example.spec.ts", // Exclude boilerplate example tests
+  //   "**/record-test-tool.spec.ts", // Exclude recorded boilerplate tests
   // ],
-  /* Run tests in files in parallel */
+
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
@@ -54,35 +55,53 @@ export default defineConfig({
       testMatch: /.*\.setup\.ts/,
     },
 
+    // {
+    //   name: "setup",
+    //   testMatch: /.*\.auth\.setup\.ts/,
+    // },
+
+    // // 2. UI TESTS PROJECT: Runs all UI tests and ensures authentication state is loaded
+    // {
+    //   name: "UI Tests (Chrome)",
+    //   dependencies: ["setup"],
+    //   // Restrict search to the main UI folder
+    //   testDir: "./tests/ui",
+    //   testMatch: "**/*.spec.ts",
+    //   use: {
+    //     ...devices["Desktop Chrome"],
+    //     permissions: ["clipboard-read"],
+
+    //     // OPTIMIZATION: If you want all UI tests to run as a specific user
+    //     // by default (e.g., customer3), you can define it here.
+    //     // If tests use custom fixtures (base.ts), this line is optional.
+    //     // storageState: '.auth/customer3.json',
+    //   },
+    // },
+
+    // // 3. API TESTS PROJECT: Runs API tests against the dedicated API URL
+    // {
+    //   name: "API Tests",
+    //   // Restrict search to the API folder
+    //   testDir: "./tests/api",
+    //   testMatch: "**/*.spec.ts",
+    //   // No 'dependencies: ["setup"]' needed, as API tests are independent
+    //   use: {
+    //     // REQUIRED: Override the baseURL for the API environment
+    //     baseURL: "https://api.practicesoftwaretesting.com",
+
+    //     // Define common API headers
+    //     extraHTTPHeaders: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //   },
+    // },
+
     {
       name: "chromium",
       dependencies: ["setup"],
       use: { ...devices["Desktop Chrome"], permissions: ["clipboard-read"] },
     },
-
-    // {
-    //   name: "UI Tests",
-    //   // Runs only files that do NOT match the ignore pattern
-    //   testIgnore: "**/ui/practicesoftwaretesting/auth.setup.ts",
-    //   // ... use storageState etc. ...
-    // },
-
-    // {
-    //   name: 'API Tests',
-    //   testMatch: '**/api/**/*.spec.ts', // Assumes your API tests are in an 'api' folder
-    //   use: {
-    //     // IMPORTANT: Define the baseURL for API requests
-    //     baseURL: 'https://api.practicesoftwaretesting.com', 
-        
-    //     // Optional: Set a higher timeout for potentially slower API calls
-    //     // actionTimeout: 10000, 
-        
-    //     // Optional: Set default headers for all API requests in this project
-    //     extraHTTPHeaders: {
-    //       'Accept': 'application/json',
-    //     },
-    //   },
-    // }
 
     // {
     //   name: "firefox",
