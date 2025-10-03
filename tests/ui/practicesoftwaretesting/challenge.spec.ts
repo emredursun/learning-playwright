@@ -3,7 +3,12 @@
 import { test, expect } from "@playwright/test";
 import { authTest } from "./base";
 
-// --- Reusable Logic ---
+// --- Constants & Configuration ---
+/**
+ * Checks for signed-in status and verifies the user's name.
+ * @param page The Playwright page object (provided by a fixture).
+ * @param expectedName The name expected in the navigation menu (e.g., "Jane Doe").
+ */
 
 /**
  * Checks for signed-in status and verifies the user's name.
