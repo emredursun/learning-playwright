@@ -37,6 +37,8 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: "http://practicesoftwaretesting.com",
+    viewport: { width: 1280, height: 720 }, // Example from your base.ts file
+
     testIdAttribute: "data-test",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
@@ -50,15 +52,15 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    // {
-    //   name: "setup",
-    //   testMatch: /.*\.setup\.ts/,
-    // },
-
     {
       name: "setup",
-      testMatch: /.*\.auth\.setup\.ts/,
+      testMatch: /.*\.setup\.ts/,
     },
+
+    // {
+    //   name: "setup",
+    //   testMatch: /.*\.auth\.setup\.ts/,
+    // },
 
     // // 2. UI TESTS PROJECT: Runs all UI tests and ensures authentication state is loaded
     // {
