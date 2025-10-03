@@ -36,8 +36,10 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: "http://practicesoftwaretesting.com",
-    viewport: { width: 1280, height: 720 }, // Example from your base.ts file
+    baseURL: "https://practicesoftwaretesting.com",
+
+    // VIEWPORT: Defined once globally
+    viewport: { width: 1280, height: 720 },
 
     testIdAttribute: "data-test",
 
