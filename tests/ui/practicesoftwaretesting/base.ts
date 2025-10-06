@@ -2,7 +2,7 @@
 
 import { test as base, Page, BrowserContext } from "@playwright/test";
 
-// Define the type for our extended test context (fixtures)
+// Define the type for the extended test context (fixtures)
 type AuthFixtures = {
   adminPage: Page;
   customer1Page: Page;
@@ -22,14 +22,13 @@ async function getAuthenticatedPage(
 
   const page = await context.newPage();
 
-  // OPTIMIZATION: Use simple page.goto('/') which relies on the global baseURL
-  // and the default 'load' state, preserving the working behavior of the original file.
+  // Use simple page.goto('/') which relies on the global baseURL
   await page.goto("/");
 
   return [context, page];
 }
 
-// Extend the base test object with our custom authenticated pages
+// Extend the base test object with the custom authenticated pages
 export const authTest = base.extend<AuthFixtures>({
   // Use the function factory for all users
   adminPage: async ({ browser }, use) => {

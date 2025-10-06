@@ -33,10 +33,8 @@ authTest.describe("Checkout Challenge Tests with Authenticated Users", () => {
   authTest(
     `Customer 1 (${PRODUCT_NAME}) - Pay Later Checkout Flow`,
     async ({ customer1Page, headless }) => {
-      // 1. Initial State Check (Navigation to '/' is now handled by the optimized base.ts fixture)
+      // 1. Initial State Check (Navigation to '/' is handled by base.ts fixture)
       await checkUserStatus(customer1Page, "Jane Doe");
-
-      // REMOVED: The redundant hardcoded page.goto() call is eliminated.
 
       // 2. Add to Cart
       await customer1Page.getByRole("link", { name: PRODUCT_NAME }).click();
@@ -70,9 +68,7 @@ authTest.describe("Checkout Challenge Tests with Authenticated Users", () => {
       await customer1Page.getByTestId("city").fill(addressData.city);
       await customer1Page.getByTestId("state").fill(addressData.state);
       await customer1Page.getByTestId("country").fill(addressData.country);
-      await customer1Page
-        .getByTestId("postal_code")
-        .fill(addressData.postal_code);
+      await customer1Page.getByTestId("postal_code").fill(addressData.postal_code);
       await customer1Page.getByTestId("proceed-3").click();
 
       // 5. Payment Selection
