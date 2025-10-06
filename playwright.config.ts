@@ -66,7 +66,7 @@ export default defineConfig({
 
     // // 2. UI TESTS PROJECT: Runs all UI tests and ensures authentication state is loaded
     // {
-    //   name: "UI Tests (Chrome)",
+    //   name: "ui",
     //   dependencies: ["setup"],
     //   // Restrict search to the main UI folder
     //   testDir: "./tests/ui",
@@ -82,24 +82,24 @@ export default defineConfig({
     //   },
     // },
 
-    // // 3. API TESTS PROJECT: Runs API tests against the dedicated API URL
-    // {
-    //   name: "API Tests",
-    //   // Restrict search to the API folder
-    //   testDir: "./tests/api",
-    //   testMatch: "**/*.spec.ts",
-    //   // No 'dependencies: ["setup"]' needed, as API tests are independent
-    //   use: {
-    //     // REQUIRED: Override the baseURL for the API environment
-    //     baseURL: "https://api.practicesoftwaretesting.com",
+    // 3. API TESTS PROJECT: Runs API tests against the dedicated API URL
+    {
+      name: "api",
+      // Restrict search to the API folder
+      testDir: "./tests/api",
+      testMatch: "**/*.spec.ts",
+      // No 'dependencies: ["setup"]' needed, as API tests are independent
+      use: {
+        // REQUIRED: Override the baseURL for the API environment
+        baseURL: "https://api.practicesoftwaretesting.com",
 
-    //     // Define common API headers
-    //     extraHTTPHeaders: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //     },
-    //   },
-    // },
+        // Define common API headers
+        extraHTTPHeaders: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      },
+    },
 
     {
       name: "chromium",
