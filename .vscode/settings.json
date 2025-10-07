@@ -27,5 +27,10 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "eslint.alwaysShowStatus": false,
   "liveServer.settings.donotVerifyTags": true,
-  "cSpell.words": ["networkidle", "practicesoftwaretesting", "Toolshop"]
+  "cSpell.words": [
+    "domcontentloaded",
+    "networkidle",
+    "practicesoftwaretesting",
+    "Toolshop"
+  ]
 }
