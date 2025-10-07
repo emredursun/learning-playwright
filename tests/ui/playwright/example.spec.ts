@@ -18,3 +18,15 @@ test("get started link", { tag: "@last" }, async ({ page }) => {
     page.getByRole("heading", { name: "Installation" })
   ).toBeVisible();
 });
+
+test("verify Butch Mayhew is still Playwright Ambassadors", async ({
+  page,
+}) => {
+  await page.goto("https://playwright.dev/");
+  await page.getByRole("link", { name: "Community" }).click();
+  await page
+    .getByLabel("Docs sidebar")
+    .getByRole("link", { name: "Ambassadors" })
+    .click();
+  await expect(page.locator("section")).toContainText("Butch Mayhew");
+});

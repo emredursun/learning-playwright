@@ -16,13 +16,14 @@ export default defineConfig({
   globalTimeout: 10 * 60 * 1000,
   testDir: "./tests",
 
-  // OPTIMIZATION: Consolidated list of files/folders to ignore from standard test runs
-  // testIgnore: [
-  //   "**/auth.setup.ts", // Prevents setup file from running during 'npx playwright test'
-  //   "**/*-snapshots/**", // Excludes all snapshot folders
-  //   "**/example.spec.ts", // Exclude boilerplate example tests
-  //   "**/record-test-tool.spec.ts", // Exclude recorded boilerplate tests
-  // ],
+  // Consolidated list of files/folders to ignore from standard test runs
+  // Note: Since 'base.ts' is at './tests/base.ts', it is not picked up by default.
+  testIgnore: [
+    // Ignore all snapshot directories created by visual tests
+    "**/*-snapshots/**",
+    // Ignore any boilerplate files in the old 'ui/playwright' folder
+    "**/ui/playwright/**",
+  ],
 
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -32,18 +33,13 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  reporter: [["html"], ["list"]],
+
+  /* Shared settings for all the projects below. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: "https://practicesoftwaretesting.com",
-
-    // VIEWPORT: Defined once globally
     viewport: { width: 1280, height: 720 },
-
     testIdAttribute: "data-test",
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on",
     actionTimeout: 0,
     ignoreHTTPSErrors: true,
@@ -54,46 +50,41 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    // {
+    //   name: "setup",
+    //   testMatch: /.*\.setup\.ts/,
+    // },
+
+    // 1. SETUP PROJECT (Required for UI test authentication)
     {
       name: "setup",
+      testDir: "./tests/setup",
       testMatch: /.*\.setup\.ts/,
     },
 
-    // {
-    //   name: "setup",
-    //   testMatch: /.*\.auth\.setup\.ts/,
-    // },
+    // 2. UI TESTS PROJECT (Enabled the Play button for UI tests)
+    {
+      name: "ui",
+      dependencies: ["setup"],
+      // CRITICAL: Explicitly tells the VS Code extension where the UI files are.
+      testDir: "./tests/ui",
+      testMatch: "**/*.spec.ts",
+      use: {
+        ...devices["Desktop Chrome"],
+        permissions: ["clipboard-read"],
+      },
+    },
 
-    // // 2. UI TESTS PROJECT: Runs all UI tests and ensures authentication state is loaded
-    // {
-    //   name: "ui",
-    //   dependencies: ["setup"],
-    //   // Restrict search to the main UI folder
-    //   testDir: "./tests/ui",
-    //   testMatch: "**/*.spec.ts",
-    //   use: {
-    //     ...devices["Desktop Chrome"],
-    //     permissions: ["clipboard-read"],
-
-    //     // OPTIMIZATION: If you want all UI tests to run as a specific user
-    //     // by default (e.g., customer3), you can define it here.
-    //     // If tests use custom fixtures (base.ts), this line is optional.
-    //     // storageState: '.auth/customer3.json',
-    //   },
-    // },
-
-    // 3. API TESTS PROJECT: Runs API tests against the dedicated API URL
+    // 3. API TESTS PROJECT (Enabled the Play button for API tests)
     {
       name: "api",
-      // Restrict search to the API folder
+      // CRITICAL: Explicitly tells the VS Code extension where the API files are.
       testDir: "./tests/api",
       testMatch: "**/*.spec.ts",
-      // No 'dependencies: ["setup"]' needed, as API tests are independent
+      // No dependencies needed for API tests
       use: {
-        // REQUIRED: Override the baseURL for the API environment
+        // Required for API calls
         baseURL: "https://api.practicesoftwaretesting.com",
-
-        // Define common API headers
         extraHTTPHeaders: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -101,11 +92,11 @@ export default defineConfig({
       },
     },
 
-    {
-      name: "chromium",
-      dependencies: ["setup"],
-      use: { ...devices["Desktop Chrome"], permissions: ["clipboard-read"] },
-    },
+    // {
+    //   name: "chromium",
+    //   dependencies: ["setup"],
+    //   use: { ...devices["Desktop Chrome"], permissions: ["clipboard-read"] },
+    // },
 
     // {
     //   name: "firefox",

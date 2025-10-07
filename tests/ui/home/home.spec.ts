@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 // IMPORT THE CUSTOM AUTH TEST OBJECT
-import { authTest } from "./base";
+import { authTest } from "../../base";
 
 // --- Constants & Reusable Logic ---
 

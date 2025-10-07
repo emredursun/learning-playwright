@@ -1,7 +1,5 @@
-// challenge.spec.ts (Optimized)
-
 import { test, expect } from "@playwright/test";
-import { authTest } from "./base";
+import { authTest } from "../../base";
 
 // --- Constants & Configuration ---
 /**
