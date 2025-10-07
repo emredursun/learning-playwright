@@ -31,9 +31,7 @@
   "homepage": "https://github.com/LinkedInLearning/learning-playwright-5911873#readme",
   "devDependencies": {
     "@playwright/test": "^1.55.1",
-    "@types/node": "^24.6.0"
-  },
-  "dependencies": {
+    "@types/node": "^24.6.0",
     "dotenv": "^17.2.3"
   }
 }
